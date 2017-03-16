@@ -1,6 +1,6 @@
 Spree::Admin::ShippingMethodsController.class_eval do
     respond_to :js, :only => [:show_tracking_shippings]
-    ssl_allowed :show_tracking_shippings
+    # ssl_allowed :show_tracking_shippings
 
 	def show_tracking_shippings
 		@delivery = generate_expedition    
