@@ -42,6 +42,10 @@ module Spree
       shipment.number
     end
 
+    def shipment_point_location
+      shipment.selected_shipping_location_id
+    end
+
     def formatted_destination
       shipment.address.seur_formatted(order.email, order.special_instructions)
     end

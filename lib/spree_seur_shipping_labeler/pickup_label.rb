@@ -134,6 +134,16 @@ module SpreeSeurShippingLabeler
           codigo_pais_origen: seller_address[:country_iso],
           id_mercancia: ''
       }
+      update_with_seur_point bundles
+    end
+
+    def update_with_seur_point(bundles)
+      shipment_point_location = @package.shipment_point_location
+      return bundles if shipment_point_location.nil?
+      bundles[:cod_centro] = shipment_point_location
+      bundles[:servicio] = '1'
+      bundles[:producto] = '38'
+      bundles
     end
   end
 end
