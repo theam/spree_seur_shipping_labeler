@@ -142,7 +142,7 @@ module SpreeSeurShippingLabeler
       return bundles if shipment_point_location.nil?
       bundles[:cod_centro] = shipment_point_location
       bundles[:servicio] = '1'
-      bundles[:producto] = '38'
+      bundles[:producto] = '48'
       bundles
     end
   end
