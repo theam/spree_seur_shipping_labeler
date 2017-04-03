@@ -6,7 +6,8 @@ module SpreeSeurShippingLabeler
     attr_accessor :params
 
     def self.config params
-      requires!(params, :username,
+      requires!(params, :pick_up_wsdl,
+                        :username,
                         :password,
                         :seur_printer, 
                         :seur_printer_model, 
