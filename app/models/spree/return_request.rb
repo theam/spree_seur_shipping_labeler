@@ -43,7 +43,7 @@ module Spree
     end
 
     def shipment_point_location
-      shipment.try(selected_shipping_location_id)
+      shipment.try(:selected_shipping_location_id)
     end
 
     def formatted_destination
