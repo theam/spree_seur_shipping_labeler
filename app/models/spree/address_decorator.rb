@@ -5,10 +5,10 @@ Spree::Address.class_eval do
               email:         email,
               company:       company,
               phone_number:  phone,
-              address:       [address1, address2].compact.join(' '),
+              address:       [address1, address2, street_number, street_key, entrance, city].compact.join(' '),
               city:          city,
               state:         state,
-              zip_code:   zipcode,
+              zip_code:       zipcode,
               country_iso:   country.iso,
               instructions:  instructions
             }
