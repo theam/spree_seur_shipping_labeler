@@ -97,8 +97,8 @@ module SpreeSeurShippingLabeler
           servicio: bundle[:service],
           producto: bundle[:product] || 2,
           total_bultos: package.bundle_number,
-          total_kilos: package.total_weight, # number of bundle * weight of bundle
-          pesoBulto:  package.bundle_weight,
+          total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
+          pesoBulto:  package.bundle_weight / 1000,
           observaciones: customer_address[:instructions] || '',
           referencia_expedicion: package.shipment_number,
           ref_bulto: package.shipment_number.to_s + '-' + index_bundle.to_s,
