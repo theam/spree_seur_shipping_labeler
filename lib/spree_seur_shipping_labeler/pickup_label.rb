@@ -1,3 +1,5 @@
+require 'i18n'
+
 module SpreeSeurShippingLabeler
   class PickupLabel
     require 'savon'
@@ -10,6 +12,15 @@ module SpreeSeurShippingLabeler
       @seller_address = @package.formatted_origin
       @credentials = SpreeSeurShippingLabeler::SeurConection.credentials
       @bundle = SpreeSeurShippingLabeler::SeurConection.connection_bundle
+      @company_name = convert_characters(seller_address[:company])
+    end
+
+    def convert_characters(value)
+      current_available_locales = I18n.available_locales
+      I18n.available_locales = [:en]
+      converted = I18n.transliterate(value) unless value.nil?
+      I18n.available_locales = current_available_locales
+      converted
     end
 
     # Sends post request to Seur web service and return the response
@@ -52,7 +63,7 @@ module SpreeSeurShippingLabeler
         in7:  bundle[:nif],
         in8:  credentials[:seur_franchise],
         in9:  '-1' ,
-        in10: seller_address[:company]
+        in10: @company_name
       }
     end
 
@@ -66,7 +77,7 @@ module SpreeSeurShippingLabeler
         in4:  bundle[:nif] ,
         in5:  credentials[:seur_franchise] ,
         in6:  '-1' ,
-        in7:  seller_address[:company]
+        in7:  @company_name
       }
     end
 
@@ -108,7 +119,7 @@ module SpreeSeurShippingLabeler
           clavePortes: bundle[:clave_portes] || 'F', # F: Facturacion
           claveReembolso: bundle[:clave_reembolso] || 'F', # F: Facturacion
           valorReembolso: bundle[:valor_reembolso] || '',
-          nombre_remit: seller_address[:company],
+          nombre_remit: @company_name,
           nombrevia_remit: seller_address[:address],
           numvia_remit: '',
           codpos_remit: seller_address[:zip_code],
@@ -134,15 +145,24 @@ module SpreeSeurShippingLabeler
           codigo_pais_origen: seller_address[:country_iso],
           id_mercancia: ''
       }
-      update_with_seur_point bundles
+      bundle_service bundles
     end
 
-    def update_with_seur_point(bundles)
+    def bundle_service(bundles)
       shipment_point_location = @package.shipment_point_location
-      return bundles if shipment_point_location.nil?
-      bundles[:cod_centro] = shipment_point_location
-      bundles[:servicio] = '1'
-      bundles[:producto] = '48'
+      case
+      when !shipment_point_location.nil?
+        bundles[:cod_centro] = shipment_point_location
+        bundles[:servicio] = '1'
+        bundles[:producto] = '48'
+      when customer_address[:country_iso] == 'ES'
+        bundles[:servicio] = bundle[:service]
+        bundles[:producto] = bundle[:product] || 2
+      else
+        bundles[:servicio] = bundle[:service_international]
+        bundles[:producto] = bundle[:product_international]
+        bundles[:id_mercancia] = bundle[:id_merchandise_international]
+      end
       bundles
     end
   end
