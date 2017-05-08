@@ -23,7 +23,7 @@ module Spree
         self.tracking_number = generated_label.body[:impresion_integracion_con_ecbws_response][:out][:ref_exped][:string]
       end
       self.response_xml    = generated_label.doc.to_xml
-      self.request_xml     = Nokogiri::XML(request_xml.body)
+      self.request_xml     = Nokogiri::XML(request_xml.body.force_encoding('ISO-8859-1'), '', 'ISO-8859-1')
     end
 
     def generate_expedition
