@@ -134,7 +134,7 @@ module SpreeSeurShippingLabeler
           piso_consignatario: '',
           puerta_consignatario: '',
           poblacion_consignatario: customer_address[:city] || '',
-          codPostal_consignatario: customer_address[:zip_code] || '',
+          codPostal_consignatario: customer_address[:zip_code]&.remove(' ') || '',
           email_consignatario: customer_address[:email]  || '',
           pais_consignatario: customer_address[:country_iso] || '',
           test_email: 'N',
