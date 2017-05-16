@@ -155,7 +155,7 @@ module SpreeSeurShippingLabeler
         bundles[:cod_centro] = shipment_point_location
         bundles[:servicio] = '1'
         bundles[:producto] = '48'
-      when customer_address[:country_iso] == 'ES'
+      when customer_address[:country_iso].in?(['ES', 'PT'])
         bundles[:servicio] = bundle[:service]
         bundles[:producto] = bundle[:product] || 2
       else
