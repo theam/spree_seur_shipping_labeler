@@ -111,7 +111,7 @@ module SpreeSeurShippingLabeler
           total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
           pesoBulto:  package.bundle_weight / 1000,
           observaciones: customer_address[:instructions] || '',
-          referencia_expedicion: package.shipment_number,
+          referencia_expedicion: package.order_number,
           ref_bulto: package.shipment_number.to_s + '-' + index_bundle.to_s,
           largo_bulto: package.length || '',
           ancho_bulto: package.width || '',
