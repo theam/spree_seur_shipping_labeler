@@ -10,7 +10,8 @@ Spree::Address.class_eval do
               state:         state,
               zip_code:       zipcode,
               country_iso:   country.iso,
-              instructions:  instructions
+              instructions:  instructions,
+              country:       country
             }
     end
 end

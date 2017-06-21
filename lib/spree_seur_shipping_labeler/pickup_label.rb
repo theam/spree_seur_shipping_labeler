@@ -105,8 +105,8 @@ module SpreeSeurShippingLabeler
           ci: bundle[:ci],
           nif: bundle[:nif],
           ccc: bundle[:ccc],
-          servicio: bundle[:service],
-          producto: bundle[:product] || 2,
+          servicio: '',
+          producto: '',
           total_bultos: package.bundle_number,
           total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
           pesoBulto:  package.bundle_weight / 1000,
@@ -151,17 +151,16 @@ module SpreeSeurShippingLabeler
     def bundle_service(bundles)
       shipment_point_location = @package.shipment_point_location
       case
-      when !shipment_point_location.nil?
-        bundles[:cod_centro] = shipment_point_location
-        bundles[:servicio] = '1'
-        bundles[:producto] = '48'
-      when customer_address[:country_iso].in?(['ES', 'PT'])
-        bundles[:servicio] = bundle[:service]
-        bundles[:producto] = bundle[:product] || 2
-      else
-        bundles[:servicio] = bundle[:service_international]
-        bundles[:producto] = bundle[:product_international]
-        bundles[:id_mercancia] = bundle[:id_merchandise_international]
+        when !shipment_point_location.nil?
+          bundles[:cod_centro] = shipment_point_location
+          bundles[:servicio] = '1'
+          bundles[:producto] = '48'
+        when customer_address[:state].seur_service.present?
+          bundles[:servicio] = customer_address[:state].seur_service
+          bundles[:producto] = customer_address[:state].seur_product
+        when customer_address[:country].seur_service.present?
+          bundles[:servicio] = customer_address[:country].seur_service
+          bundles[:producto] = customer_address[:country].seur_product
       end
       bundles
     end
