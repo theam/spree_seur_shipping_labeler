@@ -142,8 +142,7 @@ module SpreeSeurShippingLabeler
           test_reparto: 'N',
           telefono_consignatario: customer_address[:phone_number]  || '',
           cod_centro: '',
-          codigo_pais_origen: seller_address[:country_iso],
-          id_mercancia: ''
+          codigo_pais_origen: seller_address[:country_iso]
       }
       bundle_service bundles
     end
@@ -155,12 +154,15 @@ module SpreeSeurShippingLabeler
           bundles[:cod_centro] = shipment_point_location
           bundles[:servicio] = '1'
           bundles[:producto] = '48'
+          bundles[:id_mercancia] = ''
         when customer_address[:state].seur_service.present?
           bundles[:servicio] = customer_address[:state].seur_service
           bundles[:producto] = customer_address[:state].seur_product
+          bundles[:id_mercancia] = customer_address[:state].seur_id_merchandise
         when customer_address[:country].seur_service.present?
           bundles[:servicio] = customer_address[:country].seur_service
           bundles[:producto] = customer_address[:country].seur_product
+          bundles[:id_mercancia] = customer_address[:country].seur_id_merchandise
       end
       bundles
     end
