@@ -1,4 +1,4 @@
-<% if @order.shipments.first.selected_shipping_location_id.nil? %>
+<% if @order.seur_shipping_method_selected? %>
   <% if flash[:error] %>
     <div class="flash error"><%= flash[:error] %></div>
   <% elsif flash[:success] %>
