@@ -171,7 +171,7 @@ module SpreeSeurShippingLabeler
     def generate_expedition_reference
       order_number = package.order_number
       return order_number if package.order.shipments.size <= 1
-      suffix = package.order.shipments.order('id').map.with_index.select{|x, _y| x.id == package.shipment.id}.flatten[1]
+      suffix = package.order.shipments.order('id').map.with_index.select{|shipment, _index| shipment.id == package.shipment.id}.flatten[1]
       order_number + '-' + suffix.to_s
     end
   end
