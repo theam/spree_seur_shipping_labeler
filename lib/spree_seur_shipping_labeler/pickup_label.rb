@@ -111,7 +111,7 @@ module SpreeSeurShippingLabeler
           total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
           pesoBulto:  package.bundle_weight / 1000,
           observaciones: customer_address[:instructions] || '',
-          referencia_expedicion: package.order_number,
+        referencia_expedicion: generate_expedition_reference,
           ref_bulto: package.shipment_number.to_s + '-' + index_bundle.to_s,
           largo_bulto: package.length || '',
           ancho_bulto: package.width || '',
@@ -165,6 +165,14 @@ module SpreeSeurShippingLabeler
           bundles[:id_mercancia] = customer_address[:country].seur_id_merchandise
       end
       bundles
+    end
+
+    private
+    def generate_expedition_reference
+      order_number = package.order_number
+      return order_number if package.order.shipments.size <= 1
+      suffix = package.order.shipments.order('id').map.with_index.select{|x, _y| x.id == package.shipment.id}.flatten[1]
+      order_number + '-' + suffix.to_s
     end
   end
 end
