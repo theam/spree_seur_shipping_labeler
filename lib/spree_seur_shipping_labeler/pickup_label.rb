@@ -25,12 +25,12 @@ module SpreeSeurShippingLabeler
 
     # Sends post request to Seur web service and return the response
     def process_request
-      client = Savon.client(wsdl: "http://cit.seur.com/CIT-war/services/ImprimirECBWebService?wsdl", 
-                            namespaces: { "xmlns:imp" => "http://localhost:7026/ImprimirECBWebService" }, 
-                            namespace_identifier: :imp, 
-                            env_namespace: :soapenv, 
+      client = Savon.client(wsdl: "http://cit.seur.com/CIT-war/services/ImprimirECBWebService?wsdl",
+                            namespaces: { "xmlns:imp" => "http://localhost:7026/ImprimirECBWebService" },
+                            namespace_identifier: :imp,
+                            env_namespace: :soapenv,
                             pretty_print_xml: true)
-      
+
       # client.operations  => [:impresion_integracion_pdf_con_ecbws, :impresion_integracion_con_ecbws]
 
       if credentials[:seur_printer].blank?
@@ -44,9 +44,9 @@ module SpreeSeurShippingLabeler
       request  = client.build_request(operation, message: Gyoku.xml(message))
       response = client.call(operation, message: Gyoku.xml(message))
       result = response, request
-      rescue Savon::HTTPError => error
+    rescue Savon::HTTPError => error
       Rails.logger.error error.http.code
-      raise     
+      raise
     end
 
 
@@ -85,64 +85,64 @@ module SpreeSeurShippingLabeler
       # Example http://www.rubydoc.info/github/sparklemotion/nokogiri/Nokogiri/XML/Builder
       bundles = {}
       Nokogiri::XML::Builder.new(:encoding => 'ISO-8859-1') do |xml|
-          xml.root {
-            xml.exp {
-              package.bundle_number.times do |i|
-                xml.bulto {            
-                    bundles = bundle_vals(i+1)
-                    bundles.each do |key, value|
-                      xml.send(key, value)
-                    end
-                }
-              end
-            }
+        xml.root {
+          xml.exp {
+            package.bundle_number.times do |i|
+              xml.bulto {
+                bundles = bundle_vals(i+1)
+                bundles.each do |key, value|
+                  xml.send(key, value)
+                end
+              }
+            end
           }
+        }
       end
     end
 
     def bundle_vals(index_bundle)
       bundles = {
-          ci: bundle[:ci],
-          nif: bundle[:nif],
-          ccc: bundle[:ccc],
-          servicio: '',
-          producto: '',
-          total_bultos: package.bundle_number,
-          total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
-          pesoBulto:  package.bundle_weight / 1000,
-          observaciones: customer_address[:instructions] || '',
-          referencia_expedicion: package.order_number,
-          ref_bulto: package.shipment_number.to_s + '-' + index_bundle.to_s,
-          largo_bulto: package.length || '',
-          ancho_bulto: package.width || '',
-          alto_bulto: package.height || '',
-          clavePortes: bundle[:clave_portes] || 'F', # F: Facturacion
-          claveReembolso: bundle[:clave_reembolso] || 'F', # F: Facturacion
-          valorReembolso: bundle[:valor_reembolso] || '',
-          nombre_remit: @company_name,
-          nombrevia_remit: seller_address[:address],
-          numvia_remit: '',
-          codpos_remit: seller_address[:zip_code],
-          poblacion_remit: seller_address[:state],
-          telefono_remit: seller_address[:phone_number],
-          nombre_consignatario: customer_address[:name] || '',
-          direccion_consignatario: customer_address[:address] || '',
-          tipoVia_consignatario: 'CL',
-          tNumVia_consignatario: 'N',
-          numvia_consignatario: '',
-          escalera_consignatario: '',
-          piso_consignatario: '',
-          puerta_consignatario: '',
-          poblacion_consignatario: customer_address[:city] || '',
-          codPostal_consignatario: customer_address[:zip_code]&.remove(' ') || '',
-          email_consignatario: customer_address[:email]  || '',
-          pais_consignatario: customer_address[:country_iso] || '',
-          test_email: 's',
-          test_preaviso: 's',
-          test_reparto: 's',
-          telefono_consignatario: customer_address[:phone_number]  || '',
-          cod_centro: '',
-          codigo_pais_origen: seller_address[:country_iso]
+        ci: bundle[:ci],
+        nif: bundle[:nif],
+        ccc: bundle[:ccc],
+        servicio: '',
+        producto: '',
+        total_bultos: package.bundle_number,
+        total_kilos: package.total_weight / 1000, # number of bundle * weight of bundle
+        pesoBulto:  package.bundle_weight / 1000,
+        observaciones: customer_address[:instructions] || '',
+        referencia_expedicion: generate_expedition_reference,
+        ref_bulto: package.shipment_number.to_s + '-' + index_bundle.to_s,
+        largo_bulto: package.length || '',
+        ancho_bulto: package.width || '',
+        alto_bulto: package.height || '',
+        clavePortes: bundle[:clave_portes] || 'F', # F: Facturacion
+        claveReembolso: bundle[:clave_reembolso] || 'F', # F: Facturacion
+        valorReembolso: bundle[:valor_reembolso] || '',
+        nombre_remit: @company_name,
+        nombrevia_remit: seller_address[:address],
+        numvia_remit: '',
+        codpos_remit: seller_address[:zip_code],
+        poblacion_remit: seller_address[:state],
+        telefono_remit: seller_address[:phone_number],
+        nombre_consignatario: customer_address[:name] || '',
+        direccion_consignatario: customer_address[:address] || '',
+        tipoVia_consignatario: 'CL',
+        tNumVia_consignatario: 'N',
+        numvia_consignatario: '',
+        escalera_consignatario: '',
+        piso_consignatario: '',
+        puerta_consignatario: '',
+        poblacion_consignatario: customer_address[:city] || '',
+        codPostal_consignatario: customer_address[:zip_code]&.remove(' ') || '',
+        email_consignatario: customer_address[:email]  || '',
+        pais_consignatario: customer_address[:country_iso] || '',
+        test_email: 's',
+        test_preaviso: 's',
+        test_reparto: 's',
+        telefono_consignatario: customer_address[:phone_number]  || '',
+        cod_centro: '',
+        codigo_pais_origen: seller_address[:country_iso]
       }
       bundle_service bundles
     end
@@ -165,6 +165,14 @@ module SpreeSeurShippingLabeler
           bundles[:id_mercancia] = customer_address[:country].seur_id_merchandise
       end
       bundles
+    end
+
+    private
+    def generate_expedition_reference
+      order_number = package.order_number
+      return order_number if package.order.shipments.size <= 1
+      suffix = package.order.shipments.order('id').map.with_index.select{|x, _y| x.id == package.shipment.id}.flatten[1]
+      order_number + '-' + suffix.to_s
     end
   end
 end
